@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       var response = await http.post(
-        Uri.parse('https://example.com/api/login'),
+        Uri.parse('http://10.169.128.230:8001/api/login'),
         body: jsonEncode({
           'email': _emailController.text,
           'password': _passwordController.text,
@@ -32,11 +32,13 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', data['token']);
-
-        // Navigate to the next page or show success message
+        await prefs.setString('token', data['data']['token']);
+        Navigator.pushReplacementNamed(context, '/dashboard');
       } else {
         // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed')),
+        );
       }
 
       setState(() {
